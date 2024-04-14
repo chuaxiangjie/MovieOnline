@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Movies.Domain;
+using System.Threading.Tasks;
 
 namespace Movies.Contracts
 {

@@ -1,9 +1,9 @@
 ﻿using GraphQL.Types;
-using Movies.Contracts;
+using Movies.Domain;
 
 namespace Movies.Server.Gql.Types
 {
-	public class MovieGraphType : ObjectGraphType<MovieDto>
+	public class MovieGraphType : ObjectGraphType<Movie>
 	{
 		public MovieGraphType()
 		{
@@ -15,9 +15,9 @@ namespace Movies.Server.Gql.Types
 			Field(x => x.Name).Description("Name.");
 			Field(x => x.Description).Description("Description.");
 			Field(x => x.Genres).Description("Genres.");
-			Field(x => x.Rating).Description("Rating.");
-			Field(x => x.Duration).Description("Duration.");
-			Field(x => x.Image).Description("Image.");
+			Field(x => x.Rate).Description("Rate.");
+			Field(x => x.Length).Description("Length.");
+			Field(x => x.Img).Description("Image.");
 		}
 	}
 }

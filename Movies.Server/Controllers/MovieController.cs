@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Movies.Contracts;
+using Movies.Domain;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

@@ -1,4 +1,5 @@
 ﻿using Movies.Contracts;
+using Movies.Domain;
 using Orleans;
 using Orleans.Providers;
 using Orleans.Runtime;

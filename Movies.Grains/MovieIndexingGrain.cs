@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Orleans.Streams;
+using Movies.Domain;
 
 namespace Movies.Grains
 {

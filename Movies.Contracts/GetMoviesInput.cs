@@ -1,4 +1,6 @@
-﻿namespace Movies.Contracts
+﻿using Movies.Domain;
+
+namespace Movies.Contracts
 {
 	public class GetMoviesInput
 	{

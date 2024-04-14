@@ -1,4 +1,5 @@
-﻿using Orleans;
+﻿using Movies.Domain;
+using Orleans;
 using System.Threading.Tasks;
 
 namespace Movies.Contracts

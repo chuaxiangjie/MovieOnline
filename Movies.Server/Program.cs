@@ -11,6 +11,9 @@ using System.IO;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Movies.Grains;
+using Movies.Database.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Movies.Database;
 
 namespace Movies.Server
 {
@@ -101,6 +104,8 @@ namespace Movies.Server
 				.ConfigureServices((ctx, services) =>
 				{
 					services.AddHostedService<ApiHostedService>();
+					services.AddDbContext<MovieDbContext>();
+					services.AddTransient<IMovieRepository, MovieRepository>();
 				})
 				;
 

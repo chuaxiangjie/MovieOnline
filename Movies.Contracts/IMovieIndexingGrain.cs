@@ -1,4 +1,5 @@
-﻿using Orleans;
+﻿using Movies.Domain;
+using Orleans;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

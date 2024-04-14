@@ -1,4 +1,5 @@
 ﻿using Movies.Contracts;
+using Movies.Domain;
 using Orleans;
 using System.Threading.Tasks;
 
@@ -31,9 +32,9 @@ namespace Movies.GrainClients
 			Name = createMovieInput.Name,
 			Description = createMovieInput.Description,
 			Genres = createMovieInput.Genres,
-			Image = createMovieInput.Image,
-			Duration = createMovieInput.Duration,
-			Rating = createMovieInput.Rating
+			Img = createMovieInput.Img,
+			Length = createMovieInput.Length,
+			Rate = createMovieInput.Rate
 		};
 	}
 }
