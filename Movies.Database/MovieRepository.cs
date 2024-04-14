@@ -15,7 +15,8 @@ namespace Movies.Database
 
 		public async Task<IEnumerable<Movie>> GetAllAsync(string name = null, Genre? genre = null)
 		{
-			var queryable = _context.Movies.AsQueryable().AsNoTracking()
+			var queryable = _context.Movies
+				.AsQueryable().AsNoTracking()
 				.WhereIf(!string.IsNullOrEmpty(name), x => x.Name.Contains(name))
 				.WhereIf(genre is not null, x => x.GenresAsString.Contains(genre.ToString()));
 
@@ -26,8 +27,10 @@ namespace Movies.Database
 
 		public async Task<IEnumerable<Movie>> GetTopRatedAsync(int numberOfTopRatedMovie)
 		{
-			var queryable = _context.Movies.AsQueryable().AsNoTracking()
-				.OrderByDescending(x => x.Rate).Take(numberOfTopRatedMovie);
+			var queryable = _context.Movies
+				.AsQueryable().AsNoTracking()
+				.OrderByDescending(x => x.Rate)
+				.Take(numberOfTopRatedMovie);
 
 			var movies = await queryable.ToListAsync();
 
@@ -35,7 +38,8 @@ namespace Movies.Database
 		}
 
 		public async Task<Movie> GetByKeyAsync(string key) => 
-			await _context.Movies.AsNoTracking().FirstOrDefaultAsync(x => x.Key == key);
+			await _context.Movies.AsNoTracking()
+				.FirstOrDefaultAsync(x => x.Key == key);
 
 		public async Task CreateAsync(Movie movie)
 		{

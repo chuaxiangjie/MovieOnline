@@ -7,6 +7,9 @@ namespace Movies.Server.Mappers
 	{
 		public static MovieOutput ToMovieOutput(this Movie movie, string etag = null)
 		{
+			if (movie is null)
+				return null;
+
 			return new MovieOutput
 			{
 				Id = movie.Id,

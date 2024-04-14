@@ -22,6 +22,7 @@ namespace Movies.Server.Gql.Types
 			Field(x => x.Meta.ETag).Description("Etag.");
 		}
 	}
+
 	public class GenreType : EnumerationGraphType<Genre>
 	{
 		public GenreType()
