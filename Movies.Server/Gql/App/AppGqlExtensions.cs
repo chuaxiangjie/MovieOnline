@@ -22,6 +22,7 @@ namespace Movies.Server.Gql.App
 
 			services.AddSingleton<MovieGraphType>();
 			services.AddSingleton<MovieInputGraphType>();
+			services.AddSingleton<MovieUpdateGraphType>();
 			services.AddSingleton<GenreType>();
 		}
 	}

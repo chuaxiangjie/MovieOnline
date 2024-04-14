@@ -17,6 +17,7 @@ using Movies.Contracts.Dtos;
 using System.Reflection;
 using System.Collections.Generic;
 using Movies.Server.Controllers;
+using Microsoft.AspNetCore.Http;
 
 namespace Movies.Server
 {
@@ -59,6 +60,8 @@ namespace Movies.Server
 			services.AddAppGraphQL();
 			services.AddControllers()
 			.AddNewtonsoftJson();
+
+			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 			services.AddSwaggerGen(x =>
 			{

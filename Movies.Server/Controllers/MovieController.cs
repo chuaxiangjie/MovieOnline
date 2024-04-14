@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Movies.Contracts.Dtos;
 using Movies.Contracts.MovieGrains;
 using Movies.Contracts.MovieIndexerGrains;
+using Movies.Server.Helpers;
 using Movies.Server.Mappers;
 using System.Linq;
 using System.Threading.Tasks;
@@ -126,9 +127,7 @@ namespace Movies.Server.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> UpdateAsync([FromRoute] string key, [FromBody] UpdateMovieInput updateMovieInput)
 		{
-			HttpContext.Request.Headers.TryGetValue(MATCH_HEADER, out var value);
-			var etag = value.FirstOrDefault();
-			
+			var etag = HttpContext.Request.GetETag();
 			var (isSuccess, reason) = await client.UpdateAsync(key, etag, updateMovieInput);
 
 			if (!isSuccess)
