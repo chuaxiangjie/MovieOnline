@@ -1,6 +1,5 @@
 ﻿using GraphQL;
 using GraphQL.Types;
-using Microsoft.IdentityModel.Tokens;
 using Movies.Contracts.Dtos;
 using Movies.Contracts.MovieGrains;
 using Movies.Contracts.MovieIndexerGrains;
@@ -56,6 +55,29 @@ namespace Movies.Server.Gql.App
 					};
 
 					var movies = movieIndexerGrainClient.GetAllAsync(getMoviesInput).Result;
+
+					var output = movies.Select(x => x.ToMovieOutput());
+
+					return output;
+				}
+			);
+
+			Field<ListGraphType<MovieGraphType>>(
+				name: "gettopratedmovies",
+				arguments: new QueryArguments(new QueryArgument<StringGraphType>
+				{
+					Name = "limit"
+				}),
+				resolve: ctx =>
+				{
+					var limit = ctx.GetArgument<int>("limit", 5);
+
+					var getTopRatedMoviesInput = new GetTopRatedMoviesInput
+					{
+						Limit = limit
+					};
+
+					var movies = movieIndexerGrainClient.GetTopRatedAsync(getTopRatedMoviesInput).Result;
 
 					var output = movies.Select(x => x.ToMovieOutput());
 
