@@ -10,7 +10,7 @@ namespace Movies.Server.Gql.App
 			: base(provider)
 		{
 			Query = provider.GetRequiredService<MovieGraphQuery>();
-			//Mutation = provider.GetRequiredService<AppGraphMutation>();
+			Mutation = provider.GetRequiredService<MovieGraphMutation>();
 		}
 	}
 }

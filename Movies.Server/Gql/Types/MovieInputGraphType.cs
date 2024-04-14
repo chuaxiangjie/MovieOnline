@@ -3,14 +3,13 @@ using Movies.Contracts.Dtos;
 
 namespace Movies.Server.Gql.Types
 {
-	public class MovieGraphType : ObjectGraphType<MovieOutput>
+	public class MovieInputGraphType : InputObjectGraphType<CreateMovieInput>
 	{
-		public MovieGraphType()
+		public MovieInputGraphType()
 		{
-			Name = "Movie";
+			Name = "movieinput";
 			Description = "A movie api";
 
-			Field(x => x.Id).Description("Unique key.");
 			Field(x => x.Key).Description("Key.");
 			Field(x => x.Name).Description("Name.");
 			Field(x => x.Description).Description("Description.");
@@ -18,7 +17,6 @@ namespace Movies.Server.Gql.Types
 			Field(x => x.Rate).Description("Rating.");
 			Field(x => x.Length).Description("Length.");
 			Field(x => x.Img).Description("Image.");
-			Field(x => x.Meta.ETag).Description("Etag.");
 		}
 	}
 }

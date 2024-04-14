@@ -1,9 +1,11 @@
 ﻿using Movies.Domain;
+using System.ComponentModel.DataAnnotations;
 
 namespace Movies.Contracts.Dtos
 {
 	public class GetMoviesInput
 	{
+		[EnumDataType(typeof(Genre))]
 		public Genre? Genre { get; set; }
 		public string Name { get; set; }
 

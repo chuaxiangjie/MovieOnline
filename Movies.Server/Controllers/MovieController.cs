@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Movies.Contracts.Dtos;
 using Movies.Contracts.MovieGrains;
 using Movies.Contracts.MovieIndexerGrains;
-using Movies.Domain;
 using Movies.Server.Mappers;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -39,22 +37,32 @@ namespace Movies.Server.Controllers
 
 		// GET api/movies
 		[HttpGet]
-		public async Task<List<MovieOutput>> GetAllAsync([FromQuery] GetMoviesInput getMoviesInput)
+		public async Task<IActionResult> GetAllAsync([FromQuery] GetMoviesInput getMoviesInput)
 		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
 			var movies = await movieIndexingGrainClient.GetAllAsync(getMoviesInput);
 			var output = movies.Select(x => x.ToMovieOutput()).ToList();
 
-			return output;
+			return Ok(output);
 		}
 
 		// GET api/movies/top-rated
 		[HttpGet("top-rated")]
-		public async Task<List<MovieOutput>> GetTopRatedAsync([FromQuery] GetTopRatedMoviesInput getTopRatedMoviesInput)
+		public async Task<IActionResult> GetTopRatedAsync([FromQuery] GetTopRatedMoviesInput getTopRatedMoviesInput)
 		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
 			var movies = await movieIndexingGrainClient.GetTopRatedAsync(getTopRatedMoviesInput);
 			var output = movies.Select(x => x.ToMovieOutput()).ToList();
 
-			return output;
+			return Ok(output);
 		}
 
 		// POST api/movies
@@ -62,6 +70,11 @@ namespace Movies.Server.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateAsync([FromBody] CreateMovieInput createMovieInput)
 		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
 			var (isSuccess, reason) = await client.CreateAsync(createMovieInput);
 
 			if (!isSuccess)

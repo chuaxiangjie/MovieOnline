@@ -6,7 +6,7 @@ namespace Movies.Domain
 	[JsonConverter(typeof(StringEnumConverter))]
 	public enum Genre
 	{
-		Action,
+		Action = 1,
 		Adventure,
 		Comedy,
 		Crime,
