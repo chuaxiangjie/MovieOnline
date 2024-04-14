@@ -25,6 +25,7 @@ namespace Movies.Contracts.Dtos
 		[EnumArrayDataTypeWithNoDuplicates]
 		public Genre[] Genres { get; set; }
 
+		[Required]
 		[RegularExpression(@"^(?<![\d\.-])\d(\.\d)?(?!(\.\d)|\d)|(?<![\d\.-])10(?!(\.\d)|\d])$", 
 			ErrorMessage = "Rate must be between 0.0 and 10 and of 1 decimal place (optional)")]
 		public decimal Rate { get; set; }

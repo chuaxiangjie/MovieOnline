@@ -8,10 +8,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Movies.Core;
 using Movies.GrainClients;
-using Movies.Server.Gql;
 using Movies.Server.Gql.App;
 using Movies.Server.Infrastructure;
 using Movies.Server.SwaggerConfiguration;
+using System.IO;
+using System;
+using Movies.Contracts.Dtos;
+using System.Reflection;
+using System.Collections.Generic;
+using Movies.Server.Controllers;
 
 namespace Movies.Server
 {
@@ -59,6 +64,24 @@ namespace Movies.Server
 			{
 				x.OperationFilter<TokenHeaderParameterOperationFilter>();
 				x.OperationFilter<ETagIfMatchHeaderParameterOperationFilter>();
+
+				var listOfTargetAssemblies = new List<Assembly> {
+					typeof(CreateMovieInput).Assembly,
+					typeof(MovieController).Assembly
+				};
+
+				foreach (var targetAssembly in listOfTargetAssemblies)
+				{
+					try
+					{
+						var xmlFilename = $"{targetAssembly.GetName().Name}.xml";
+						x.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine($"Error when includingXmlComments for swagger: {ex.Message}");
+					}
+				}
 			}).AddSwaggerGenNewtonsoftSupport();
 		}
 
@@ -97,7 +120,7 @@ namespace Movies.Server
 			app.UseSwagger();
 			app.UseSwaggerUI(c =>
 			{
-				c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Test1 Api v1");
+				c.SwaggerEndpoint("/swagger/v1/swagger.json", "Movie Online Api V1");
 			});
 		}
 	}
