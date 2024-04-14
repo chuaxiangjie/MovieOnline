@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Movies.Server.Controllers
 {
-	[Route("api/[controller]")]
+	[Route("api/movies")]
 	public class MovieController(
 		IMovieGrainClient client,
 		IMovieIndexerGrainClient movieIndexingGrainClient
@@ -40,6 +40,14 @@ namespace Movies.Server.Controllers
 		public async Task<List<Movie>> GetAllAsync([FromQuery] GetMoviesInput getMoviesInput)
 		{
 			var movies = await movieIndexingGrainClient.GetAllAsync(getMoviesInput);
+
+			return movies;
+		}
+
+		[HttpGet("top-rated")]
+		public async Task<List<Movie>> GetTopRatedAsync([FromQuery] GetTopRatedMoviesInput getTopRatedMoviesInput)
+		{
+			var movies = await movieIndexingGrainClient.GetTopRatedAsync(getTopRatedMoviesInput);
 
 			return movies;
 		}

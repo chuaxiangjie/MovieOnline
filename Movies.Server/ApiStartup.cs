@@ -58,6 +58,7 @@ namespace Movies.Server
 			services.AddSwaggerGen(x =>
 			{
 				x.OperationFilter<TokenHeaderParameterOperationFilter>();
+				x.OperationFilter<ETagIfMatchHeaderParameterOperationFilter>();
 			});
 		}
 

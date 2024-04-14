@@ -2,22 +2,20 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Orleans.Streams;
 using Movies.Domain;
 using Movies.Database;
 using System.Linq;
 using Movies.Contracts.MovieIndexerGrains;
-using Movies.Contracts.Events;
 
 namespace Movies.Grains
 {
-	public class MovieIndexingGrain : Grain, IMovieIndexerGrain
+	public class MovieSearchIndexerGrain : MovieIndexerGrainBase, IMovieSearchIndexerGrain
 	{
 		private readonly IMovieRepository _movieRepository;
 		private bool _requiresMoviesRefresh = false;
 		private List<Movie> _movies;
 
-		public MovieIndexingGrain(IMovieRepository movieRepository)
+		public MovieSearchIndexerGrain(IMovieRepository movieRepository)
 		{
 			_movieRepository = movieRepository;
 		}
@@ -27,25 +25,12 @@ namespace Movies.Grains
 			_requiresMoviesRefresh = true;
 			_movies = [];
 
-			// Create a GUID based on our GUID as a grain
-			var guid = new Guid("0240de60-ddde-4b75-b183-0633966ab72e");
-
-			// Get one of the providers which we defined in config
-			var streamProvider = GetStreamProvider("SMSProvider");
-
-			// Get the reference to a stream
-			var stream = streamProvider.GetStream<MovieCreatedOrUpdatedEvent>(guid, "movieapp");
-
-			// Set our OnNext method to the lambda which simply prints the data.
-			await stream.SubscribeAsync<MovieCreatedOrUpdatedEvent>(
-				async (data, token) =>
-				{
-					ClearMovies();
-					_requiresMoviesRefresh = true;
-
-					await Task.CompletedTask;
-				});
-
+			await SubscribeToMovieCreatedOrUpdatedEventAsync(() =>
+			{
+				ClearMovies();
+				_requiresMoviesRefresh = true;
+			});
+			
 			await Task.CompletedTask;
 		}
 

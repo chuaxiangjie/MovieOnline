@@ -10,9 +10,7 @@ namespace Movies.Server
 	{
 		public async Task Execute(CancellationToken cancellationToken)
 		{
-			await grainFactory
-				.GetGrain<IMovieInitializerGrain>(0)
-				.InitializeMovieGrains();
+			
 		}
 	}
 }

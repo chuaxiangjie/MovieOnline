@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Movies.Contracts.MovieIndexerGrains
 {
-	public interface IMovieIndexerGrain : IGrainWithStringKey
+	public interface IMovieTopRatingIndexerGrain : IGrainWithIntegerKey
 	{
 		Task<List<Movie>> GetManyAsync();
 	}

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Movies.Grains
 {
 	[StorageProvider(ProviderName = "Default")]
-	public class MovieGrain : Grain<MovieState>, IMovieGrain, IMovieSeedingGrain
+	public class MovieGrain : Grain<MovieState>, IMovieGrain
 	{
 		private readonly IPersistentState<MovieState> _state;
 		private readonly IMovieRepository _movieRepository;
@@ -24,23 +24,22 @@ namespace Movies.Grains
 			_movieRepository = movieRepository;
 		}
 
-		public async Task InitFromDbAsync()
+		public override async Task OnActivateAsync()
 		{
-			var movie = await _movieRepository.GetByKeyAsync(this.GetPrimaryKeyString());
+			await base.OnActivateAsync();
 
-			_state.State = new MovieState
+			if (_state.State.Movie is null)
 			{
-				Movie = movie
-			};
-
-			await _state.WriteStateAsync();
+				var movie = await GetFromExternalDbAsync();
+				await UpdateStateAsync(movie);
+			}
 		}
 
 		public async Task<(Movie movie, string etag)> GetAsync()
 		{
 			var movie = _state.State.Movie;
 
-			return (movie, _state.Etag);
+			return await Task.FromResult((movie, _state.Etag));
 		}
 
 		public async Task<(bool isSuccess, string failureReason)> 
@@ -50,7 +49,7 @@ namespace Movies.Grains
 				return (false, $"{nameof(movie.Key)}:{movie.Key} already exist.");
 			
 			await UpdateStateAsync(movie);
-			await SaveToExternalDbAsync(movie);
+			await SaveAsCreateToExternalDbAsync(movie);
 
 			return (true, null);
 		}
@@ -68,7 +67,7 @@ namespace Movies.Grains
 			movie.Description = description;
 
 			await UpdateStateAsync(movie);
-			await SaveToExternalDbAsync(movie);
+			await SaveAsUpdateToExternalDbAsync(movie);
 
 			return (true, null);
 		}
@@ -81,10 +80,11 @@ namespace Movies.Grains
 			PublishMovieCreatedOrUpdatedEvent();
 		}
 
-		private async Task SaveToExternalDbAsync(Movie movie)
-		{
-			await _movieRepository.CreateAsync(movie);
-		}
+		private async Task SaveAsCreateToExternalDbAsync(Movie movie) => await _movieRepository.CreateAsync(movie);
+
+		private async Task SaveAsUpdateToExternalDbAsync(Movie movie) => await _movieRepository.UpdateAsync(movie);
+
+		private async Task<Movie> GetFromExternalDbAsync() => await _movieRepository.GetByKeyAsync(this.GetPrimaryKeyString());
 
 		private void PublishMovieCreatedOrUpdatedEvent()
 		{
