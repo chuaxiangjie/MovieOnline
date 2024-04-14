@@ -1,5 +1,5 @@
 ﻿using GraphQL.Types;
-using Movies.Contracts;
+using Movies.Contracts.MovieGrains;
 using Movies.Server.Gql.Types;
 using System;
 

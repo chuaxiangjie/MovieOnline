@@ -1,29 +1,16 @@
-﻿using System;
-using System.Linq;
+﻿using Movies.Domain;
 
-namespace Movies.Domain
+namespace Movies.Contracts.Dtos
 {
-	public class Movie
+	public class CreateMovieInput
 	{
 		public int Id { get; set; }
-
 		public string Key { get; set; }
-
 		public string Name { get; set; }
-
 		public string Description { get; set; }
-
-		public Genre[] Genres => GenresAsString
-			.Split(',')
-			.Select(x => (Genre)Enum.Parse(typeof(Genre), x))
-			.ToArray();
-
-		public string GenresAsString { get; set; }
-
+		public Genre[] Genres { get; set; }
 		public decimal Rate { get; set; }
-
 		public string Length { get; set; }
-
 		public string Img { get; set; }
 	}
 }

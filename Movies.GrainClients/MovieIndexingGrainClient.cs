@@ -1,4 +1,5 @@
-﻿using Movies.Contracts;
+﻿using Movies.Contracts.Dtos;
+using Movies.Contracts.MovieIndexerGrains;
 using Movies.Domain;
 using Orleans;
 using System.Collections.Generic;
@@ -6,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Movies.GrainClients
 {
-	public class MovieIndexingGrainClient(IGrainFactory grainFactory) : IMovieIndexingGrainClient
+	public class MovieIndexingGrainClient(IGrainFactory grainFactory) : IMovieIndexerGrainClient
 	{
 		public async Task<List<Movie>> GetAllAsync(GetMoviesInput getMoviesInput)
 		{
 			var searchKey = FormatSearchKey(getMoviesInput);
 
-			var movieIndexer = grainFactory.GetGrain<IMovieIndexingGrain>(searchKey);
+			var movieIndexer = grainFactory.GetGrain<IMovieIndexerGrain>(searchKey);
 
 			var movies = await movieIndexer.GetManyAsync();
 

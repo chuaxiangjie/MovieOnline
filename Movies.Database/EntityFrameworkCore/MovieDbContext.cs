@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Movies.Database.Converter;
 using Movies.Database.SeedModel;
 using Movies.Domain;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Movies.Database.EntityFrameworkCore
 {
@@ -25,10 +25,15 @@ namespace Movies.Database.EntityFrameworkCore
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			var converter = new GenreListConverter();
-
 			modelBuilder.Entity<Movie>(entity =>
 			{
+				entity.Ignore(x => x.Genres);
+				entity.HasKey(x => x.Id);
+
+				entity.Property(b => b.Id)
+				.ValueGeneratedOnAdd()
+				.UseIdentityColumn();
+
 				entity.Property(b => b.Key)
 				.HasMaxLength(100)
 				.IsRequired();
@@ -42,9 +47,9 @@ namespace Movies.Database.EntityFrameworkCore
 				.IsRequired();
 
 				entity
-				.Property(b => b.Genres)
-				.HasConversion(converter)
+				.Property(b => b.GenresAsString)
 				.HasMaxLength(100)
+				.HasColumnName("Genres")
 				.IsRequired();
 
 				entity.Property(b => b.Rate)
@@ -65,13 +70,31 @@ namespace Movies.Database.EntityFrameworkCore
 
 		private static List<Movie> SeedMovieData()
 		{
-			var movieStore = new MovieStore();
+			var movieStore = new MovieStoreFromJson();
 			using (var r = new StreamReader(@"../movies.json"))
 			{
 				var json = r.ReadToEnd();
-				movieStore = JsonConvert.DeserializeObject<MovieStore>(json);
+				movieStore = JsonConvert.DeserializeObject<MovieStoreFromJson>(json);
 			}
-			return movieStore.Movies;
+
+			var movies = movieStore.Movies.Select(x => ToMovie(x)).ToList();
+
+			return movies;
+		}
+
+		private static Movie ToMovie(MovieFromJson movieFromJson)
+		{
+			return new Movie
+			{
+				Id = movieFromJson.Id,
+				Name = movieFromJson.Name,
+				Description = movieFromJson.Description,
+				GenresAsString = string.Join(",", movieFromJson.Genres),
+				Img = movieFromJson.Img,
+				Key = movieFromJson.Key,
+				Length = movieFromJson.Length,
+				Rate = movieFromJson.Rate
+			};
 		}
 	}
 }

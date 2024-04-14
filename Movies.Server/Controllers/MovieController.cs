@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Movies.Contracts;
+using Movies.Contracts.Dtos;
+using Movies.Contracts.MovieGrains;
+using Movies.Contracts.MovieIndexerGrains;
 using Movies.Domain;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Movies.Server.Controllers
@@ -10,19 +14,24 @@ namespace Movies.Server.Controllers
 	[Route("api/[controller]")]
 	public class MovieController(
 		IMovieGrainClient client,
-		IMovieIndexingGrainClient movieIndexingGrainClient
+		IMovieIndexerGrainClient movieIndexingGrainClient
 		) : Controller
 	{
+		const string ETAG_HEADER = "ETag";
+		const string MATCH_HEADER = "If-Match";
+
 		// GET api/movie/avenger
 		[HttpGet("{key}")]
 		public async Task<IActionResult> GetAsync([FromRoute] string key)
 		{
-			var movie = await client.GetAsync(key);
+			var (movie, etag) = await client.GetAsync(key);
 
 			if (movie is null)
 			{
 				return NotFound();
 			}
+
+			HttpContext.Response.Headers.Add(ETAG_HEADER, etag);
 
 			return Ok(movie);
 		}
@@ -50,9 +59,19 @@ namespace Movies.Server.Controllers
 		}
 
 		[Authorize]
-		[HttpPut("{id}")]
-		public async Task<IActionResult> UpdateAsync([FromRoute] string movieKey, [FromBody] CreateMovieInput createMovieInput)
+		[HttpPut("{key}")]
+		public async Task<IActionResult> UpdateAsync([FromRoute] string key, [FromBody] UpdateMovieInput updateMovieInput)
 		{
+			HttpContext.Request.Headers.TryGetValue(MATCH_HEADER, out var value);
+			var etag = value.FirstOrDefault();
+			
+			var (isSuccess, reason) = await client.UpdateAsync(key, etag, updateMovieInput);
+
+			if (!isSuccess)
+			{
+				return BadRequest(reason);
+			}
+
 			return Ok();
 		}
 	}

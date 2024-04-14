@@ -1,21 +1,25 @@
-﻿using Movies.Contracts;
-using Orleans;
+﻿using Orleans;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Orleans.Streams;
 using Movies.Domain;
+using Movies.Database;
+using System.Linq;
+using Movies.Contracts.MovieIndexerGrains;
+using Movies.Contracts.Events;
 
 namespace Movies.Grains
 {
-	public class MovieIndexingGrain : Grain, IMovieIndexingGrain
+	public class MovieIndexingGrain : Grain, IMovieIndexerGrain
 	{
+		private readonly IMovieRepository _movieRepository;
 		private bool _requiresMoviesRefresh = false;
 		private List<Movie> _movies;
 
-		public MovieIndexingGrain()
+		public MovieIndexingGrain(IMovieRepository movieRepository)
 		{
-			
+			_movieRepository = movieRepository;
 		}
 
 		public override async Task OnActivateAsync()
@@ -51,10 +55,9 @@ namespace Movies.Grains
 			{
 				var (name, genre) = GetSearchParameters();
 
-				var movieLibraryGrain = GrainFactory.GetGrain<IMovieLibraryGrain>(0);
-				var movies = await movieLibraryGrain.GetAllAsync(name, genre);
+				var movies = await _movieRepository.GetAllAsync(name, genre);
 
-				_movies = movies;
+				_movies = movies.ToList();
 				_requiresMoviesRefresh = false;
 			}
 			

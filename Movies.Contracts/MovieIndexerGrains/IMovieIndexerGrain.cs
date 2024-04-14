@@ -3,9 +3,9 @@ using Orleans;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Movies.Contracts
+namespace Movies.Contracts.MovieIndexerGrains
 {
-	public interface IMovieIndexingGrain : IGrainWithStringKey
+	public interface IMovieIndexerGrain : IGrainWithStringKey
 	{
 		Task<List<Movie>> GetManyAsync();
 	}

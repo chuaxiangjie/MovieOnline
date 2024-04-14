@@ -11,7 +11,7 @@ using Movies.Database.EntityFrameworkCore;
 namespace Movies.Database.Migrations
 {
     [DbContext(typeof(MovieDbContext))]
-    [Migration("20240414033942_Add_Movies_Table")]
+    [Migration("20240414061031_Add_Movies_Table")]
     partial class Add_Movies_Table
     {
         /// <inheritdoc />
@@ -37,10 +37,11 @@ namespace Movies.Database.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("Genres")
+                    b.Property<string>("GenresAsString")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("Genres");
 
                     b.Property<string>("Img")
                         .IsRequired()
@@ -75,7 +76,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 1,
                             Description = "A former Special Forces operative turned mercenary is subjected to a rogue experiment that leaves him with accelerated healing powers, adopting the alter ego Deadpool.",
-                            Genres = "Action,Adventure,Comedy",
+                            GenresAsString = "Action,Adventure,Comedy",
                             Img = "deadpool.jpg",
                             Key = "deadpool",
                             Length = "1hr 48mins",
@@ -86,7 +87,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 2,
                             Description = "A veteran pot dealer creates a fake family as part of his plan to move a huge shipment of weed into the U.S. from Mexico.",
-                            Genres = "Adventure,Comedy,Crime",
+                            GenresAsString = "Adventure,Comedy,Crime",
                             Img = "we-are-the-millers.jpg",
                             Key = "we-are-the-millers",
                             Length = "1hr 50mins",
@@ -97,7 +98,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 3,
                             Description = "The group NWA emerges from the mean streets of Compton in Los Angeles, California, in the mid-1980s and revolutionizes Hip Hop culture with their music and tales about life in the hood.",
-                            Genres = "Biography,Drama,History",
+                            GenresAsString = "Biography,Drama,History",
                             Img = "straight-outta-compton.jpg",
                             Key = "straight-outta-compton",
                             Length = "2hr 27mins",
@@ -108,7 +109,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 4,
                             Description = "Teenagers at a juvenile detention center, under the leadership of their counselor, gain self-esteem by playing football together.",
-                            Genres = "Crime,Drama,Sport",
+                            GenresAsString = "Crime,Drama,Sport",
                             Img = "gridiron-gang.jpg",
                             Key = "gridiron-gang",
                             Length = "2hr 5mins",
@@ -119,7 +120,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 5,
                             Description = "In 1970s America, a detective works to bring down the drug empire of Frank Lucas, a heroin kingpin from Manhattan, who is smuggling the drug into the country from the Far East.",
-                            Genres = "Biography,Crime,Drama",
+                            GenresAsString = "Biography,Crime,Drama",
                             Img = "american-gangster.jpg",
                             Key = "american-gangster",
                             Length = "2hr 37mins",
@@ -130,7 +131,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 6,
                             Description = "It's 1949 Los Angeles, the city is run by gangsters and a malicious mobster, Mickey Cohen. Determined to end the corruption, John O'Mara assembles a team of cops, ready to take down the ruthless leader and restore peace to the city.",
-                            Genres = "Action,Crime,Drama",
+                            GenresAsString = "Action,Crime,Drama",
                             Img = "gangster-squad.jpg",
                             Key = "gangster-squad",
                             Length = "1hr 53mins",
@@ -141,7 +142,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 7,
                             Description = "An FBI agent and an Interpol detective track a team of illusionists who pull off bank heists during their performances and reward their audiences with the money.",
-                            Genres = "Crime,Mystery,Thriller",
+                            GenresAsString = "Crime,Mystery,Thriller",
                             Img = "now-you-see-me.jpg",
                             Key = "now-you-see-me",
                             Length = "1hr 55mins",
@@ -152,7 +153,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 8,
                             Description = "A new theme park is built on the original site of Jurassic Park. Everything is going well until the park's newest attraction--a genetically modified giant stealth killing machine--escapes containment and goes on a killing spree.",
-                            Genres = "Action,Adventure,Scifi",
+                            GenresAsString = "Action,Adventure,Scifi",
                             Img = "jurassic-world.jpg",
                             Key = "jurassic-world",
                             Length = "2hr 4mins",
@@ -163,7 +164,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 9,
                             Description = "Ethan and team take on their most impossible mission yet, eradicating the Syndicate - an International rogue organization as highly skilled as they are, committed to destroying the IMF.",
-                            Genres = "Action,Adventure,Thriller",
+                            GenresAsString = "Action,Adventure,Thriller",
                             Img = "mission-impossible-rogue-nation.jpg",
                             Key = "mission-impossible-rogue-nation",
                             Length = "2hr 11mins",
@@ -174,7 +175,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 10,
                             Description = "In the early 1960s, CIA agent Napoleon Solo and KGB operative Illya Kuryakin participate in a joint mission against a mysterious criminal organization, which is working to proliferate nuclear weapons.",
-                            Genres = "Action,Adventure,Thriller",
+                            GenresAsString = "Action,Adventure,Thriller",
                             Img = "the-man-from-uncle.jpg",
                             Key = "the-man-from-uncle",
                             Length = "1hr 56mins",
@@ -185,7 +186,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 11,
                             Description = "A cryptic message from Bond's past sends him on a trail to uncover a sinister organization. While M battles political forces to keep the secret service alive, Bond peels back the layers of deceit to reveal the terrible truth behind SPECTRE.",
-                            Genres = "Action,Adventure,Thriller",
+                            GenresAsString = "Action,Adventure,Thriller",
                             Img = "spectre.jpg",
                             Key = "spectre",
                             Length = "2hr 28mins",
@@ -196,7 +197,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 12,
                             Description = "The film tells the story of the identical twin gangsters Reggie and Ronnie Kray, two of the most notorious criminals in British history, and their organised crime empire in the East End of London during the 1960s.",
-                            Genres = "Biography,Crime,Drama",
+                            GenresAsString = "Biography,Crime,Drama",
                             Img = "legend.jpg",
                             Key = "legend",
                             Length = "2hr 28mins",
@@ -207,7 +208,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 13,
                             Description = "Boxer Billy Hope turns to trainer Tick Wills to help him get his life back on track after losing his wife in a tragic accident and his daughter to child protection services.",
-                            Genres = "Action,Drama,Sport",
+                            GenresAsString = "Action,Drama,Sport",
                             Img = "southpaw.jpg",
                             Key = "southpaw",
                             Length = "2hr 4mins",
@@ -218,7 +219,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 14,
                             Description = "During the Cold War, an American lawyer is recruited to defend an arrested Soviet spy in court, and then help the CIA facilitate an exchange of the spy for the Soviet captured American U2 spy plane pilot, Francis Gary Powers.",
-                            Genres = "Biography,Drama,Thriller",
+                            GenresAsString = "Biography,Drama,Thriller",
                             Img = "bridge-of-spies.jpg",
                             Key = "bridge-of-spies",
                             Length = "2hr 22mins",
@@ -229,7 +230,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 15,
                             Description = "Armed with a super-suit with the astonishing ability to shrink in scale but increase in strength, cat burglar Scott Lang must embrace his inner hero and help his mentor, Dr. Hank Pym, plan and pull off a heist that will save the world.",
-                            Genres = "Action,Adventure,Scifi",
+                            GenresAsString = "Action,Adventure,Scifi",
                             Img = "ant-man.jpg",
                             Key = "ant-man",
                             Length = "1hr 57mins",
@@ -240,7 +241,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 16,
                             Description = "Deckard Shaw seeks revenge against Dominic Toretto and his family for his comatose brother.",
-                            Genres = "Action,Crime,Thriller",
+                            GenresAsString = "Action,Crime,Thriller",
                             Img = "fast-and-furious-7.jpg",
                             Key = "fast-and-furious-7",
                             Length = "2hr 17mins",
@@ -251,7 +252,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 17,
                             Description = "Wanted by the Chinese mafia, a New York City bike messenger escapes into the world of parkour after meeting a beautiful stranger.",
-                            Genres = "Action,Crime,Drama",
+                            GenresAsString = "Action,Crime,Drama",
                             Img = "tracers.jpg",
                             Key = "tracers",
                             Length = "1hr 34mins",
@@ -262,7 +263,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 18,
                             Description = "A low-ranking thug is entrusted by his crime boss to dispose of a gun that killed corrupt cops, but things get out of control when the gun ends up in wrong hands.",
-                            Genres = "Action,Crime,Drama",
+                            GenresAsString = "Action,Crime,Drama",
                             Img = "running-scared.jpg",
                             Key = "running-scared",
                             Length = "2hr 2mins",
@@ -273,7 +274,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 19,
                             Description = "Three buddies wake up from a bachelor party in Las Vegas, with no memory of the previous night and the bachelor missing. They make their way around the city in order to find their friend before his wedding.",
-                            Genres = "Comedy",
+                            GenresAsString = "Comedy",
                             Img = "the-hangover.jpg",
                             Key = "the-hangover",
                             Length = "1hr 40mins",
@@ -284,7 +285,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 20,
                             Description = "3 high school seniors throw a birthday party to make a name for themselves. As the night progresses, things spiral out of control as word of the party spreads.",
-                            Genres = "Comedy,Crime",
+                            GenresAsString = "Comedy,Crime",
                             Img = "project-x.jpg",
                             Key = "project-x",
                             Length = "1hr 28mins",
@@ -295,7 +296,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 21,
                             Description = "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, the caped crusader must come to terms with one of the greatest psychological tests of his ability to fight injustice.",
-                            Genres = "Action,Crime,Drama",
+                            GenresAsString = "Action,Crime,Drama",
                             Img = "the-dark-knight.jpg",
                             Key = "the-dark-knight",
                             Length = "2hr 32mins",
@@ -306,7 +307,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 22,
                             Description = "Every seven years in an unsuspecting town, The Tournament takes place. A battle royale between 30 of the world's deadliest assassins. The last man standing receiving the $10,            000,            000 cash prize and the title of Worlds No 1, which itself carries the legendary million dollar a bullet price tag.",
-                            Genres = "Action,Thriller",
+                            GenresAsString = "Action,Thriller",
                             Img = "the-tournament.jpg",
                             Key = "the-tournament",
                             Length = "1hr 35mins",
@@ -317,7 +318,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 23,
                             Description = "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.",
-                            Genres = "Action,Scifi",
+                            GenresAsString = "Action,Scifi",
                             Img = "the-matrix.jpg",
                             Key = "the-matrix",
                             Length = "2hr 16mins",
@@ -328,7 +329,7 @@ namespace Movies.Database.Migrations
                         {
                             Id = 24,
                             Description = "Two hip detectives protect a murder witness while investigating a case of stolen heroin.",
-                            Genres = "Action,Comedy,Crime",
+                            GenresAsString = "Action,Comedy,Crime",
                             Img = "bad-boys.jpg",
                             Key = "bad-boys",
                             Length = "1hr 59mins",

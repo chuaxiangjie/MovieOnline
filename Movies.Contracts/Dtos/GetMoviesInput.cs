@@ -1,6 +1,6 @@
 ﻿using Movies.Domain;
 
-namespace Movies.Contracts
+namespace Movies.Contracts.Dtos
 {
 	public class GetMoviesInput
 	{
