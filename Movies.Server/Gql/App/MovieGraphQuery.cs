@@ -1,13 +1,15 @@
-﻿using GraphQL.Types;
+﻿using Azure;
+using GraphQL.Types;
+using Movies.Contracts.Dtos;
 using Movies.Contracts.MovieGrains;
 using Movies.Server.Gql.Types;
-using System;
+using Movies.Server.Mappers;
 
 namespace Movies.Server.Gql.App
 {
 	public class MovieGraphQuery : ObjectGraphType
 	{
-		public MovieGraphQuery(IMovieGrainClient sampleClient)
+		public MovieGraphQuery(IMovieGrainClient movieGrainClient)
 		{
 			Name = nameof(MovieGraphQuery);
 			Field<MovieGraphType>("getmovies",
@@ -15,7 +17,14 @@ namespace Movies.Server.Gql.App
 				{
 					Name = "key"
 				}),
-				resolve: ctx => sampleClient.GetAsync(ctx.Arguments["key"].ToString()).Result
+				resolve: ctx =>
+				{
+					var (movie, etag) = movieGrainClient.GetAsync(ctx.Arguments["key"].ToString()).Result;
+
+					var output = movie.ToMovieOutput(etag);
+
+					return output;
+				}
 			);
 		}
 	}

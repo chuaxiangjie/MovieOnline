@@ -18,9 +18,10 @@ namespace Movies.Server.Gql.App
 
 			services.AddSingleton<ISchema, AppSchema>();
 			services.AddSingleton<MovieGraphQuery>();
-			services.AddSingleton<AppGraphMutation>();
+			//services.AddSingleton<AppGraphMutation>();
 
 			services.AddSingleton<MovieGraphType>();
+			services.AddSingleton<GenreType>();
 		}
 	}
 }
