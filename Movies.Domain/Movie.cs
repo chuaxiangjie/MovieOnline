@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace Movies.Domain
@@ -12,12 +13,8 @@ namespace Movies.Domain
 		public string Name { get; set; }
 
 		public string Description { get; set; }
-
-		public Genre[] Genres => GenresAsString
-			.Split(',')
-			.Select(x => (Genre)Enum.Parse(typeof(Genre), x))
-			.ToArray();
-
+		public Genre[] Genres { get;set; }
+		[NotMapped]
 		public string GenresAsString { get; set; }
 
 		public decimal Rate { get; set; }

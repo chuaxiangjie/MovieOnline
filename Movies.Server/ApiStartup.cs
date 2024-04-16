@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using Movies.Server.Controllers;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace Movies.Server
 {
@@ -38,6 +39,7 @@ namespace Movies.Server
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddSerilog();
 			services.AddCustomAuthentication();
 			services.AddCors(o => o.AddPolicy("TempCorsPolicy", builder =>
 			{

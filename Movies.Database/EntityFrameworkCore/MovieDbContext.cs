@@ -27,8 +27,8 @@ namespace Movies.Database.EntityFrameworkCore
 		{
 			modelBuilder.Entity<Movie>(entity =>
 			{
-				entity.Ignore(x => x.Genres);
 				entity.HasKey(x => x.Id);
+				entity.HasIndex(x => x.Genres);
 
 				entity.Property(b => b.Id)
 				.ValueGeneratedOnAdd()
@@ -46,14 +46,12 @@ namespace Movies.Database.EntityFrameworkCore
 				.HasMaxLength(500)
 				.IsRequired();
 
-				entity
-				.Property(b => b.GenresAsString)
-				.HasMaxLength(100)
-				.HasColumnName("Genres")
+				entity.Property(b => b.Genres)
+				.HasMaxLength(255)
 				.IsRequired();
 
 				entity.Property(b => b.Rate)
-				.HasPrecision(2, 1)
+				.HasPrecision(3, 1)
 				.IsRequired();
 
 				entity.Property(b => b.Length)
@@ -64,7 +62,7 @@ namespace Movies.Database.EntityFrameworkCore
 				.HasMaxLength(255)
 				.IsRequired();
 
-				entity.HasData(SeedMovieData());
+				//entity.HasData(SeedMovieData());
 			});
 		}
 
@@ -89,7 +87,7 @@ namespace Movies.Database.EntityFrameworkCore
 				Id = movieFromJson.Id,
 				Name = movieFromJson.Name,
 				Description = movieFromJson.Description,
-				GenresAsString = string.Join(",", movieFromJson.Genres),
+				Genres = movieFromJson.Genres,
 				Img = movieFromJson.Img,
 				Key = movieFromJson.Key,
 				Length = movieFromJson.Length,

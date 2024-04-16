@@ -44,7 +44,6 @@ namespace Movies.Server
 			ConsoleTitleBuilder.Append(() => $"(Api port: {options.Value.Port} | pid: {Process.GetCurrentProcess().Id})");
 
 			_host = WebHost.CreateDefaultBuilder()
-				.UseSerilog()
 				.UseConfiguration(configuration)
 				.ConfigureAppConfiguration(cfg =>
 				{
