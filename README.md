@@ -2,17 +2,16 @@
 
 Provides Api to extract and modify movies catalog
 
-## Architecture Diagram
+## Technologies
 
-<Insert Image>
-
-#### Developer comments
-The above technologies design consists of
+The technologies design consists of
    * Database - Microsoft SQL Server to store movies catalog
+   * Orleans - Virtual Actor Model for concurrency and in-memory cache
    * Rest Api - Develop using .Net 8
    * GraphQL - Develop via GraphQL 3.0
-   * Swagger - Develop via swashbuckle
+   * Api documentation - Develop via swagger
 
+## Architecture Diagram
 
 ## Application Logic
 
@@ -21,6 +20,9 @@ The Movie Online App uses Orleans grain virtual actor model to model grains for 
 ###  1. Movie Grain
 
 Summary : Represents each movie in the catalog
+
+![MovieGrain](https://github.com/chuaxiangjie/MovieOnline/assets/5947398/aecb5d29-6ef9-4229-ab9f-4308771e273e)
+
 
 | Features | | Details |
 | :---:       |     :---:      |          :---: |
@@ -37,6 +39,10 @@ Summary : Represents each movie in the catalog
 
 Summary : Represents each unique search request based on keys
 
+
+![MovieSearchIndexerGrain](https://github.com/chuaxiangjie/MovieOnline/assets/5947398/6d222bbe-6f1d-4442-bae7-3fddeef6ae5f)
+
+
 | Features |  | Details |
 | :---:       |     :---:      |          :---: |
 | Grain Key   | ✓  |  {name}_{genre} (string) <br><br>Example: `avenger_action`, `aveng_`, `_action` <br><br>Client search for name, genre which are then formatted as key, the above will results in activation of 3 grains  |
@@ -46,8 +52,6 @@ Summary : Represents each unique search request based on keys
 | GetMany    | ✓      | Fetch from memory cache if exist, else, query from external datasource and store in cache <br><br> Queried using `name`, `genre`, `pagesize`, `referenceId`   |
 | Consuming event  |  ✓   | Listens to *MovieCreatedOrUpdatedEvent* and clear all memory cache    |
 
-#### Developer comments
-Both of the data structures represent different states (available/occupied) of the parking slots in a carpark. The following section will describe in details about the design and rationality
 
 ###  3. Movie Top Rating Indexer Grain
 
@@ -61,9 +65,6 @@ Summary : Represents each unique search request based on keys
 | Grain Activation | ✓   | Activate only on demand. <br><br>Subscribe to *MovieCreatedOrUpdatedEvent*   |
 | GetMany    | ✓      | Fetch from memory cache if exist, else, query from external datasource and store in cache <br><br> Queried using `top_number_of_records`   |
 | Consuming event  |  ✓   | Listens to *MovieCreatedOrUpdatedEvent* and clear all memory cache    |
-
-#### Developer comments
-Both of the data structures represent different states (available/occupied) of the parking slots in a carpark. The following section will describe in details about the design and rationality
 
 
 ## Getting Started
@@ -108,11 +109,11 @@ dotnet ef database update
 Build and Run using Visual Studio 2022
 
 -> Clone repository using VS, build and run application
+```
 
+#### Execute Apis via swagger
 
+Browse swagger url : http://localhost:6600/swagger/index.html
 
-## Built With
-
-* [.NET Core Console Application](https://dotnet.microsoft.com/download) - Microsoft Technology
-* [C#] - Programming language used
+![image](https://github.com/chuaxiangjie/MovieOnline/assets/5947398/c7ac5427-36bf-4763-a376-dd624e38d38b)
 
