@@ -64,6 +64,11 @@ Summary : Represents each unique search request based on keys
 | GetMany    | ✓      | Fetch from memory cache if exist, else, query from external datasource and store in cache <br><br> Queried using `top_number_of_records`   |
 | Consuming event  |  ✓   | Listens to *MovieCreatedOrUpdatedEvent* and clear all memory cache    |
 
+###  4. Database Movie Table
+
+![image](https://github.com/chuaxiangjie/MovieOnline/assets/5947398/080ae94f-6572-4d17-93b0-b71888293abc)
+
+
 
 ## Getting Started
 
