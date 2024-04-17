@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Movies.Domain;
 using Movies.Database;
 using Movies.Contracts.MovieIndexerGrains;
-using Orleans.Concurrency;
 using System.Linq;
 
 namespace Movies.Grains

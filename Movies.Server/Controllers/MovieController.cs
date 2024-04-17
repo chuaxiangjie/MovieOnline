@@ -52,7 +52,7 @@ namespace Movies.Server.Controllers
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> GetAllAsync([FromQuery] GetMoviesBasicInfoInput getMoviesBasicInfoInput)
+		public async Task<IActionResult> GetAllAsync([FromQuery] GetSearchMoviesInput getMoviesBasicInfoInput)
 		{
 			if (!ModelState.IsValid)
 			{

@@ -9,9 +9,9 @@ namespace Movies.GrainClients
 {
 	public class MovieIndexerGrainClient(IGrainFactory grainFactory) : IMovieIndexerGrainClient
 	{
-		public async Task<PagedResponseKeyset<MovieBasicInfo>> GetAllAsync(GetMoviesBasicInfoInput getMoviesBasicInfoInput)
+		public async Task<PagedResponseKeyset<MovieBasicInfo>> GetAllAsync(GetSearchMoviesInput getMoviesBasicInfoInput)
 		{
-			var searchKey = getMoviesBasicInfoInput.ToString();
+			var searchKey = GetSearchKey(getMoviesBasicInfoInput);
 			var movieSearchIndexerGrain = grainFactory.GetGrain<IMovieSearchIndexerGrain>(searchKey);
 
 			var movieBasicInfoPagedResponse = await movieSearchIndexerGrain
@@ -27,6 +27,18 @@ namespace Movies.GrainClients
 			var movies = await movieTopRatingIndexerGrain.GetManyAsync();
 
 			return movies;
+		}
+		
+		private string GetSearchKey(GetSearchMoviesInput getMoviesBasicInfoInput)
+		{
+			var searchKey = "{0}_{1}";
+
+			var name = string.IsNullOrEmpty(getMoviesBasicInfoInput.Name) ? string.Empty : getMoviesBasicInfoInput.Name.Trim();
+			var genre = getMoviesBasicInfoInput.Genre is null ? string.Empty : getMoviesBasicInfoInput.Genre.ToString();
+
+			searchKey = string.Format(searchKey, name, genre);
+
+			return searchKey;
 		}
 	}
 }

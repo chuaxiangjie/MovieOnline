@@ -15,20 +15,19 @@ namespace Movies.Grains
 		protected async Task SubscribeToMovieCreatedOrUpdatedEventAsync(Action onReceived)
 		{
 			// Create a GUID based on our GUID as a grain
-			var guid = new Guid("0240de60-ddde-4b75-b183-0633966ab72e");
+			var guid = new Guid(StreamConsts.StreamGuid);
 
 			// Get one of the providers which we defined in config
-			var streamProvider = GetStreamProvider("SMSProvider");
+			var streamProvider = GetStreamProvider(StreamConsts.StreamProvider);
 
 			// Get the reference to a stream
-			var stream = streamProvider.GetStream<MovieCreatedOrUpdatedEvent>(guid, "movieapp");
+			var stream = streamProvider.GetStream<MovieCreatedOrUpdatedEvent>(guid, StreamConsts.StreamNamespace);
 
 			// Set our OnNext method to the lambda which simply prints the data.
 			await stream.SubscribeAsync<MovieCreatedOrUpdatedEvent>(
 				async (data, token) =>
 				{
 					onReceived();
-
 					await Task.CompletedTask;
 				});
 		}

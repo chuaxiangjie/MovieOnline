@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Movies.Database.EntityFrameworkCore;
 using Movies.Database.Extensions;
 using Movies.Domain;
@@ -10,32 +9,27 @@ using System.Threading.Tasks;
 
 namespace Movies.Database
 {
-	public class MovieRepository(IServiceScopeFactory scopeFactory, MovieDbContext movieDbContext) : IMovieRepository, IDisposable
+	public class MovieRepository(MovieDbContext movieDbContext) : IMovieRepository, IDisposable
 	{
 		private readonly MovieDbContext _context = movieDbContext;
 
 		public async Task<PagedResponseKeyset<MovieBasicInfo>> GetAllAsync(
 			int pageSize, int referenceId, string name, Genre? genre)
 		{
-			//using (var scope = scopeFactory.CreateScope())
-			//{
-			//	var db = scope.ServiceProvider.GetRequiredService<MovieDbContext>();
+			var queryable = _context.Movies
+			.AsQueryable().AsNoTracking()
+			.WhereIf(!string.IsNullOrEmpty(name), x => x.Name.Contains(name))
+			.WhereIf(genre is not null, x => x.Genres.Any(x => x == genre))
+			.Where(x => x.Id > referenceId)
+			.Take(pageSize)
+			.Select(x => new MovieBasicInfo { Id = x.Id, Key = x.Key, Name = x.Name, Genres = x.Genres, Rate = x.Rate });
 
-				var queryable = _context.Movies
-				.AsQueryable().AsNoTracking()
-				.WhereIf(!string.IsNullOrEmpty(name), x => x.Name.Contains(name))
-				.WhereIf(genre is not null, x => x.Genres.Any(x => x == genre))
-				.Where(x => x.Id > referenceId)
-				.Take(pageSize)
-				.Select(x => new MovieBasicInfo { Id = x.Id, Key = x.Key, Name = x.Name, Genres = x.Genres, Rate = x.Rate });
+			var movies = await queryable.ToListAsync();
 
-				var movies = await queryable.ToListAsync();
+			var newReferenceId = movies.Count != 0 ? movies.Last().Id : 0;
+			var pagedResponse = new PagedResponseKeyset<MovieBasicInfo>(movies, newReferenceId);
 
-				var newReferenceId = movies.Count != 0 ? movies.Last().Id : 0;
-				var pagedResponse = new PagedResponseKeyset<MovieBasicInfo>(movies, newReferenceId);
-
-				return pagedResponse;
-			//}
+			return pagedResponse;
 		}
 
 		public async Task<IEnumerable<MovieBasicInfo>> GetTopRatedAsync(int numberOfTopRatedMovie)

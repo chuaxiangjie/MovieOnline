@@ -49,7 +49,7 @@ namespace Movies.Server.Gql.App
 
 					var name = ctx.GetArgument<string>("name", null);
 
-					var getMoviesBasicInfoInput = new GetMoviesBasicInfoInput
+					var getMoviesBasicInfoInput = new GetSearchMoviesInput
 					{
 						Genre = genre,
 						Name = name

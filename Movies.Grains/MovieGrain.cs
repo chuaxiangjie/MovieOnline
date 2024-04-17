@@ -91,12 +91,14 @@ namespace Movies.Grains
 
 		private void PublishMovieCreatedOrUpdatedEvent()
 		{
-			// Pick a GUID for a chat room grain and chat room stream
-			var guid = new Guid("0240de60-ddde-4b75-b183-0633966ab72e");
-			// Get one of the providers which we defined in our config
-			var streamProvider = GetStreamProvider("SMSProvider");
+			// Create a GUID based on our GUID as a grain
+			var guid = new Guid(StreamConsts.StreamGuid);
+
+			// Get one of the providers which we defined in config
+			var streamProvider = GetStreamProvider(StreamConsts.StreamProvider);
+
 			// Get the reference to a stream
-			var stream = streamProvider.GetStream<MovieCreatedOrUpdatedEvent>(guid, "movieapp");
+			var stream = streamProvider.GetStream<MovieCreatedOrUpdatedEvent>(guid, StreamConsts.StreamNamespace);
 
 			stream.OnNextAsync(new MovieCreatedOrUpdatedEvent());
 		}
