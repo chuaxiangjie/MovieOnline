@@ -1,5 +1,4 @@
 ﻿using Orleans;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Movies.Domain;
@@ -12,8 +11,7 @@ namespace Movies.Grains
 	public class MovieTopRatingIndexerGrain : MovieIndexerGrainBase, IMovieTopRatingIndexerGrain
 	{
 		private readonly IMovieRepository _movieRepository;
-		private bool _requiresMoviesRefresh = false;
-		private List<Movie> _movies;
+		private List<MovieBasicInfo> _movies;
 
 		public MovieTopRatingIndexerGrain(IMovieRepository movieRepository)
 		{
@@ -22,36 +20,32 @@ namespace Movies.Grains
 
 		public override async Task OnActivateAsync()
 		{
-			_requiresMoviesRefresh = true;
 			_movies = [];
 
-			await SubscribeToMovieCreatedOrUpdatedEventAsync(() =>
+			await SubscribeToMovieCreatedOrUpdatedEventAsync(async () =>
 			{
-				ClearMovies();
-				_requiresMoviesRefresh = true;
+				await UpdateMovieCacheAsync();
 			});
+
+			await UpdateMovieCacheAsync();
 		}
 
-		public async Task<List<Movie>> GetManyAsync()
+		public async Task<IReadOnlyList<MovieBasicInfo>> GetManyAsync() => await Task.FromResult(_movies.AsReadOnly());
+
+		private async Task UpdateMovieCacheAsync()
 		{
-			if (_requiresMoviesRefresh)
-			{
-				var numberOfTopRatedMovie = GetSearchParameters();
+			ClearMovies();
+			var numberOfTopRatedMovie = (int)this.GetPrimaryKeyLong();
+			var movies = await GetFromExternalDbAsync(numberOfTopRatedMovie);
 
-				var movies = await _movieRepository.GetTopRatedAsync(numberOfTopRatedMovie);
-
-				_movies = movies.ToList();
-				_requiresMoviesRefresh = false;
-			}
-			
-			return _movies;
+			_movies = movies;
 		}
 
-		private int GetSearchParameters()
+		private async Task<List<MovieBasicInfo>> GetFromExternalDbAsync(int numberOfTopRatedMovie)
 		{
-			var numberOfTopRatedMovie = this.GetPrimaryKeyLong();
+			var movies = await _movieRepository.GetTopRatedAsync(numberOfTopRatedMovie);
 
-			return (int)numberOfTopRatedMovie;
+			return movies.ToList();
 		}
 
 		private void ClearMovies() => _movies.Clear();

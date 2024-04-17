@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Movies.Contracts.MovieIndexerGrains
 {
-	public interface IMovieTopRatingIndexerGrain : IGrainWithIntegerKey
+	public interface IMovieSearchIndexerChildGrain : IGrainWithStringKey
 	{
-		Task<IReadOnlyList<MovieBasicInfo>> GetManyAsync();
+		Task<PagedResponseKeyset<Movie>> PopulateAsync(int pageSize, int lastId);
 	}
 }

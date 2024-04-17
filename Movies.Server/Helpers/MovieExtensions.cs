@@ -1,5 +1,6 @@
 ﻿using Movies.Contracts.Dtos;
 using Movies.Domain;
+using System.Linq;
 
 namespace Movies.Server.Mappers
 {
@@ -25,6 +26,43 @@ namespace Movies.Server.Mappers
 					ETag = etag
 				}
 			};
+		}
+
+		public static MovieBasicInfoOutput ToMovieBasicInfoOutput(this MovieBasicInfo movieBasicInfo)
+		{
+			if (movieBasicInfo is null)
+				return null;
+
+			return new MovieBasicInfoOutput
+			{
+				Id = movieBasicInfo.Id,
+				Key = movieBasicInfo.Key,
+				Name = movieBasicInfo.Name,
+				Genres = movieBasicInfo.Genres,
+				Rate = movieBasicInfo.Rate
+			};
+		}
+
+		public static MoviePagedOutput<MovieOutput> ToMoviePagedOutput(this PagedResponseKeyset<Movie> pagedResponse)
+		{
+			var output = new MoviePagedOutput<MovieOutput>
+			{
+				Reference = pagedResponse.ReferenceId,
+				Movies = pagedResponse.Data.Select(x => x.ToMovieOutput()).ToList()
+			};
+
+			return output;
+		}
+
+		public static MoviePagedOutput<MovieBasicInfoOutput> ToMoviePagedOutput(this PagedResponseKeyset<MovieBasicInfo> pagedResponse)
+		{
+			var output = new MoviePagedOutput<MovieBasicInfoOutput>
+			{
+				Reference = pagedResponse.ReferenceId,
+				Movies = pagedResponse.Data.Select(x => x.ToMovieBasicInfoOutput()).ToList()
+			};
+
+			return output;
 		}
 	}
 }

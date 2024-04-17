@@ -9,7 +9,7 @@ namespace Movies.GrainClients
 		public static void AddAppClients(this IServiceCollection services)
 		{
 			services.AddSingleton<IMovieGrainClient, MovieGrainClient>();
-			services.AddSingleton<IMovieIndexerGrainClient, MovieIndexerGrainClient>();
+			services.AddTransient<IMovieIndexerGrainClient, MovieIndexerGrainClient>();
 		}
 	}
 }

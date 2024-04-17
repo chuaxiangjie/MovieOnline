@@ -1,5 +1,6 @@
 ﻿using GraphQL;
 using GraphQL.Types;
+using Movies.Contracts;
 using Movies.Contracts.Dtos;
 using Movies.Contracts.MovieGrains;
 using Movies.Contracts.MovieIndexerGrains;
@@ -48,38 +49,41 @@ namespace Movies.Server.Gql.App
 
 					var name = ctx.GetArgument<string>("name", null);
 
-					var getMoviesInput = new GetMoviesInput
+					var getMoviesBasicInfoInput = new GetMoviesBasicInfoInput
 					{
 						Genre = genre,
 						Name = name
 					};
 
-					var movies = movieIndexerGrainClient.GetAllAsync(getMoviesInput).Result;
+					var movies = movieIndexerGrainClient.GetAllAsync(getMoviesBasicInfoInput).Result;
 
-					var output = movies.Select(x => x.ToMovieOutput());
+					//var output = movies.Select(x => x.ToMovieOutput());
 
-					return output;
+					//return output;
+
+					return null;
 				}
 			);
 
 			Field<ListGraphType<MovieGraphType>>(
 				name: "gettopratedmovies",
-				arguments: new QueryArguments(new QueryArgument<StringGraphType>
+				arguments: new QueryArguments(new QueryArgument<BigIntGraphType>
 				{
-					Name = "limit"
+					Name = "ratingRange"
 				}),
 				resolve: ctx =>
 				{
-					var limit = ctx.GetArgument<int>("limit", 5);
+					var ratingRangeInt = ctx.GetArgument<int>("ratingRange", (int)TopMovieRatingRange.Top5);
+					var ratingRange = (TopMovieRatingRange)ratingRangeInt;
 
 					var getTopRatedMoviesInput = new GetTopRatedMoviesInput
 					{
-						Limit = limit
+						RatingRange = ratingRange
 					};
 
 					var movies = movieIndexerGrainClient.GetTopRatedAsync(getTopRatedMoviesInput).Result;
 
-					var output = movies.Select(x => x.ToMovieOutput());
+					var output = movies.Select(x => x.ToMovieBasicInfoOutput());
 
 					return output;
 				}

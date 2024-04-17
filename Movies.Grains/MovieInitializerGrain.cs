@@ -20,13 +20,13 @@ namespace Movies.Grains
 
 		public async Task InitializeMovieGrains()
 		{
-			var movies = await _movieRepository.GetAllAsync();
+			//var movies = await _movieRepository.GetAllAsync();
 
-			await Parallel.ForEachAsync(movies, async (movie, token) =>
-			{
-				var movieSeedingGrain = _grainFactory.GetGrain<IMovieSeedingGrain>(movie.Key);
-				await movieSeedingGrain.InitFromDbAsync();
-			});
+			//await Parallel.ForEachAsync(movies, async (movie, token) =>
+			//{
+			//	var movieSeedingGrain = _grainFactory.GetGrain<IMovieSeedingGrain>(movie.Key);
+			//	await movieSeedingGrain.InitFromDbAsync();
+			//});
 		}
 	}
 }

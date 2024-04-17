@@ -29,6 +29,8 @@ namespace Movies.Database.EntityFrameworkCore
 			{
 				entity.HasKey(x => x.Id);
 				entity.HasIndex(x => x.Genres);
+				entity.HasIndex(x => x.Key);
+				entity.HasIndex(x => x.Rate);
 
 				entity.Property(b => b.Id)
 				.ValueGeneratedOnAdd()

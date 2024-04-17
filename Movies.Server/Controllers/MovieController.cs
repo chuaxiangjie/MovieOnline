@@ -21,7 +21,7 @@ namespace Movies.Server.Controllers
 		const string MATCH_HEADER = "If-Match";
 
 		/// <summary>
-		/// Get movie
+		/// Get movie details
 		/// </summary>
 		/// <param name="key"></param>
 		/// <response code="200"></response>
@@ -52,15 +52,15 @@ namespace Movies.Server.Controllers
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> GetAllAsync([FromQuery] GetMoviesInput getMoviesInput)
+		public async Task<IActionResult> GetAllAsync([FromQuery] GetMoviesBasicInfoInput getMoviesBasicInfoInput)
 		{
 			if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
 			}
 
-			var movies = await movieIndexingGrainClient.GetAllAsync(getMoviesInput);
-			var output = movies.Select(x => x.ToMovieOutput()).ToList();
+			var pagedResponse = await movieIndexingGrainClient.GetAllAsync(getMoviesBasicInfoInput);
+			var output = pagedResponse.ToMoviePagedOutput();
 
 			return Ok(output);
 		}
@@ -82,7 +82,7 @@ namespace Movies.Server.Controllers
 			}
 
 			var movies = await movieIndexingGrainClient.GetTopRatedAsync(getTopRatedMoviesInput);
-			var output = movies.Select(x => x.ToMovieOutput()).ToList();
+			var output = movies.Select(x => x.ToMovieBasicInfoOutput()).ToList();
 
 			return Ok(output);
 		}

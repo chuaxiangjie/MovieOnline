@@ -28,12 +28,12 @@ namespace Movies.GrainClients
 			return await movieGrain.UpdateAsync(etag, updateMovieInput.Name, updateMovieInput.Description);
 		}
 
-		private Movie ToMovie(CreateMovieInput createMovieInput) => new Movie
+		private Movie ToMovie(CreateMovieInput createMovieInput) => new()
 		{
 			Key = createMovieInput.Key,
 			Name = createMovieInput.Name,
 			Description = createMovieInput.Description,
-			GenresAsString = string.Join(",", createMovieInput.Genres),
+			Genres = createMovieInput.Genres,
 			Img = createMovieInput.Img,
 			Length = createMovieInput.Length,
 			Rate = createMovieInput.Rate

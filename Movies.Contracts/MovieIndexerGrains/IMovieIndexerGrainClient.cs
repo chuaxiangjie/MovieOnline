@@ -7,7 +7,7 @@ namespace Movies.Contracts.MovieIndexerGrains
 {
 	public interface IMovieIndexerGrainClient
 	{
-		Task<List<Movie>> GetAllAsync(GetMoviesInput genre);
-		Task<List<Movie>> GetTopRatedAsync(GetTopRatedMoviesInput getTopRatedMoviesInput);
+		Task<PagedResponseKeyset<MovieBasicInfo>> GetAllAsync(GetMoviesBasicInfoInput getMoviesBasicInfoInput);
+		Task<IReadOnlyList<MovieBasicInfo>> GetTopRatedAsync(GetTopRatedMoviesInput getTopRatedMoviesInput);
 	}
 }

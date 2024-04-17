@@ -9,21 +9,22 @@ namespace Movies.GrainClients
 {
 	public class MovieIndexerGrainClient(IGrainFactory grainFactory) : IMovieIndexerGrainClient
 	{
-		public async Task<List<Movie>> GetAllAsync(GetMoviesInput getMoviesInput)
+		public async Task<PagedResponseKeyset<MovieBasicInfo>> GetAllAsync(GetMoviesBasicInfoInput getMoviesBasicInfoInput)
 		{
-			var searchKey = getMoviesInput.ToString();
-			var movieIndexer = grainFactory.GetGrain<IMovieSearchIndexerGrain>(searchKey);
+			var searchKey = getMoviesBasicInfoInput.ToString();
+			var movieSearchIndexerGrain = grainFactory.GetGrain<IMovieSearchIndexerGrain>(searchKey);
 
-			var movies = await movieIndexer.GetManyAsync();
+			var movieBasicInfoPagedResponse = await movieSearchIndexerGrain
+				.GetManyAsync(getMoviesBasicInfoInput.PageSize, getMoviesBasicInfoInput.ReferenceId);
 
-			return movies;
+			return movieBasicInfoPagedResponse;
 		}
 
-		public async Task<List<Movie>> GetTopRatedAsync(GetTopRatedMoviesInput getTopRatedMoviesInput)
+		public async Task<IReadOnlyList<MovieBasicInfo>> GetTopRatedAsync(GetTopRatedMoviesInput getTopRatedMoviesInput)
 		{
-			var movieIndexer = grainFactory.GetGrain<IMovieTopRatingIndexerGrain>(getTopRatedMoviesInput.Limit);
-
-			var movies = await movieIndexer.GetManyAsync();
+			var movieTopRatingIndexerGrain = grainFactory
+				.GetGrain<IMovieTopRatingIndexerGrain>((int)getTopRatedMoviesInput.RatingRange);
+			var movies = await movieTopRatingIndexerGrain.GetManyAsync();
 
 			return movies;
 		}

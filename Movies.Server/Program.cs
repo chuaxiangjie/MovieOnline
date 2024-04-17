@@ -95,7 +95,7 @@ namespace Movies.Server
 							.AddApplicationPart(typeof(MovieGrain).Assembly).WithReferences()
 						)
 						.AddIncomingGrainCallFilter<LoggingIncomingCallFilter>()
-						.AddStartupTask<DataSeedingStartupTask>()
+						.AddStartupTask<GrainInitializationStartupTask>()
 						.AddSimpleMessageStreamProvider("SMSProvider")
 						.AddMemoryGrainStorage("PubSubStore")
 					;

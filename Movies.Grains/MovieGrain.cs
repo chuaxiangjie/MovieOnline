@@ -57,6 +57,9 @@ namespace Movies.Grains
 		public async Task<(bool isSuccess, string failureReason)> 
 			UpdateAsync(string etag, string name, string description)
 		{
+			if (_state.State.Movie is null)
+				return (false, "movie not found.");
+
 			var currentEtag = _state.Etag;
 
 			if (currentEtag != etag)
