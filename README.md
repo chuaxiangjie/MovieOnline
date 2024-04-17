@@ -1,6 +1,70 @@
-# Movie Online Api
+# MovieOnline App
 
-Provides Api to extract movies catalog
+Provides Api to extract and modify movies catalog
+
+## Architecture Diagram
+
+<Insert Image>
+
+#### Developer comments
+The above technologies design consists of
+   * Database - Microsoft SQL Server to store movies catalog
+   * Rest Api - Develop using .Net 8
+   * GraphQL - Develop via GraphQL 3.0
+   * Swagger - Develop via swashbuckle
+
+
+## Application Logic
+
+The Movie Online App uses Orleans grain virtual actor model to model grains for different purpose
+
+###  1. Movie Grain
+
+Summary : Represents each movie in the catalog
+
+| Features | | Details |
+| :---:       |     :---:      |          :---: |
+| Grain Key   | ✓   |  Movie Key (string) <br></br>Example : `we-are-the-millers`  |
+| In-Memory persistance state   | ✓   |  Store movie state   |
+| External persistance | ✓  | Read/Store movie in relational database   |
+| Grain Activation | ✓   | Activate only on demand. <br><br>If memory state is null, fetch movie from external datasource and update state   |
+| Get movie    | ✓      | Read from memory state   |
+| Create movie    | ✓     | Write to memory state and external persistance   |
+| Update movie    | ✓     | Optimistic concurrency check via etag. <br>Update memory state and external persistance    |
+| Publish event  |  ✓   |  On every successful create/update, publish *MovieCreatedOrUpdatedEvent*   |
+
+###  2. Movie Search Indexer Grain
+
+Summary : Represents each unique search request based on keys
+
+| Features |  | Details |
+| :---:       |     :---:      |          :---: |
+| Grain Key   | ✓  |  {name}_{genre} (string) <br><br>Example: `avenger_action`, `aveng_`, `_action` <br><br>Client search for name, genre which are then formatted as key, the above will results in activation of 3 grains  |
+| In-Memory Cache   | ✓    |  Stores the search results queries from external datasource.   |
+| External datasource | ✓   | Query movies from relational database   |
+| Grain Activation | ✓   | Activate only on demand. <br><br>Subscribe to *MovieCreatedOrUpdatedEvent*   |
+| GetMany    | ✓      | Fetch from memory cache if exist, else, query from external datasource and store in cache <br><br> Queried using `name`, `genre`, `pagesize`, `referenceId`   |
+| Consuming event  |  ✓   | Listens to *MovieCreatedOrUpdatedEvent* and clear all memory cache    |
+
+#### Developer comments
+Both of the data structures represent different states (available/occupied) of the parking slots in a carpark. The following section will describe in details about the design and rationality
+
+###  3. Movie Top Rating Indexer Grain
+
+Summary : Represents each unique search request based on keys
+
+| Features |  | Details |
+| :---:       |     :---:      |          :---: |
+| Grain Key   | ✓  |  {top_number_of_records} (int) <br><br>Example: `5`, `10`, `20`, `30`  |
+| In-Memory Cache   | ✓    |  Stores the search results queries from external datasource.   |
+| External datasource | ✓   | Query movies from relational database   |
+| Grain Activation | ✓   | Activate only on demand. <br><br>Subscribe to *MovieCreatedOrUpdatedEvent*   |
+| GetMany    | ✓      | Fetch from memory cache if exist, else, query from external datasource and store in cache <br><br> Queried using `top_number_of_records`   |
+| Consuming event  |  ✓   | Listens to *MovieCreatedOrUpdatedEvent* and clear all memory cache    |
+
+#### Developer comments
+Both of the data structures represent different states (available/occupied) of the parking slots in a carpark. The following section will describe in details about the design and rationality
+
 
 ## Getting Started
 
@@ -14,51 +78,41 @@ What things you need to install the software and how to install them
 
 1. Install Visual Studio 2022 Community 
 (https://visualstudio.microsoft.com/vs/community/)
-Note: Must be above v17.8+ to support .Net 8
+> [!NOTE]  
+> Must be above v17.8+ to support .Net 8
 
-2. Prior to installation, please ensure .Net 8 runtime is selected
-![image](https://github.com/chuaxiangjie/MovieOnline/assets/5947398/cff74185-74f7-4019-99cf-f8201fb4a447)
-
-3. Clone this repository, and click on OlreansMovie.sln to launch solution via Visual Studio
-![image](https://github.com/chuaxiangjie/MovieOnline/assets/5947398/a47216a0-e4db-4b82-9c6b-f1c5572fa464)
-
-4. Install Microsoft SQL Server Management Studio (SSMS)
+2. Install Microsoft SQL Server Management Studio (SSMS) <br>
 Follow tutorial : https://www.c-sharpcorner.com/article/how-to-install-sql-server-20222/
 
-#### Run Database Migration (Microsoft sql server)
+3. Clone repository in visual studio
+   
+4. Update database connection string in application
+> [!NOTE]
+> Only server name is required to change
 
-1. Change connectionstring
-Note : Only server name is required to change 
 ![image](https://github.com/chuaxiangjie/MovieOnline/assets/5947398/1d40de17-1f0f-47cd-b34c-7313585beca5)
 
-
-
-
-#### Build and Run using Visual Studio 2022
-
+5. Open command prompt, enter
 ```
--> Build application
--> Verify build succeeded
-
+dotnet tool install --global dotnet-ef
 ```
 
-#### Launch Application
+6. In the same command prompt, cd to Movies.Database folder, enter
+```
+dotnet ef database update
+```
 
-#### Run
+7. Verify in Microsoft SQL Server Management Studio (SSMS), database MoviesFromJson is created with Movies table seeded with sample data.
+
+```
+Build and Run using Visual Studio 2022
+
+-> Clone repository using VS, build and run application
 
 
-
-#### View Swagger
-
-
-
-
-## Features
-
-* Api - Query Movies
 
 ## Built With
 
-* [.NET 8](https://dotnet.microsoft.com/download) - Microsoft Technology
-* [ASP.NET Core] - Framework
+* [.NET Core Console Application](https://dotnet.microsoft.com/download) - Microsoft Technology
 * [C#] - Programming language used
+
