@@ -20,7 +20,7 @@ namespace Movies.Database.EntityFrameworkCore
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			optionsBuilder.UseSqlServer("Server=LAPTOP-PJ8829TH\\SQLEXPRESS;Database=MovieStore;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=Yes;");
+			optionsBuilder.UseSqlServer("Server=LAPTOP-PJ8829TH\\SQLEXPRESS;Database=MovieStoreFromJson;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=Yes;");
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -64,7 +64,7 @@ namespace Movies.Database.EntityFrameworkCore
 				.HasMaxLength(255)
 				.IsRequired();
 
-				//entity.HasData(SeedMovieData());
+				entity.HasData(SeedMovieData());
 			});
 		}
 
