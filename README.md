@@ -6,12 +6,10 @@ Provides Api to extract and modify movies catalog
 
 The technologies design consists of
    * Database - Microsoft SQL Server to store movies catalog
-   * Orleans - Virtual Actor Model for concurrency and in-memory cache
+   * Orleans - Develop using Orleans 3.X 
    * Rest Api - Develop using .Net 8
-   * GraphQL - Develop via GraphQL 3.0
-   * Api documentation - Develop via swagger
-
-## Architecture Diagram
+   * GraphQL - Develop using GraphQL 3.X
+   * Api documentation - Develop using swagger
 
 ## Application Logic
 
@@ -26,7 +24,7 @@ Summary : Represents each movie in the catalog
 
 | Features | | Details |
 | :---:       |     :---:      |          :---: |
-| Grain Key   | ✓   |  Movie Key (string) <br></br>Example : `we-are-the-millers`  |
+| Grain Key   | ✓   |  Movie Key (string) <br></br>Example : `pacific-rim`  |
 | In-Memory persistance state   | ✓   |  Store movie state   |
 | External persistance | ✓  | Read/Store movie in relational database   |
 | Grain Activation | ✓   | Activate only on demand. <br><br>If memory state is null, fetch movie from external datasource and update state   |
@@ -45,7 +43,7 @@ Summary : Represents each unique search request based on keys
 
 | Features |  | Details |
 | :---:       |     :---:      |          :---: |
-| Grain Key   | ✓  |  {name}_{genre} (string) <br><br>Example: `avenger_action`, `aveng_`, `_action` <br><br>Client search for name, genre which are then formatted as key, the above will results in activation of 3 grains  |
+| Grain Key   | ✓  |  {name}_{genre} (string) <br><br>Example: `avenger_action`, `aven_`, `adventure` <br><br>Client search for name, genre which are then formatted as key, the above will results in activation of 3 grains  |
 | In-Memory Cache   | ✓    |  Stores the search results queries from external datasource.   |
 | External datasource | ✓   | Query movies from relational database   |
 | Grain Activation | ✓   | Activate only on demand. <br><br>Subscribe to *MovieCreatedOrUpdatedEvent*   |
@@ -105,9 +103,8 @@ dotnet ef database update
 
 7. Verify in Microsoft SQL Server Management Studio (SSMS), database MoviesFromJson is created with Movies table seeded with sample data.
 
+8. Build and Run using Visual Studio 2022
 ```
-Build and Run using Visual Studio 2022
-
 -> Clone repository using VS, build and run application
 ```
 
