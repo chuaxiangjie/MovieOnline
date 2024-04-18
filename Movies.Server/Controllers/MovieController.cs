@@ -6,6 +6,7 @@ using Movies.Contracts.MovieGrains;
 using Movies.Contracts.MovieIndexerGrains;
 using Movies.Server.Helpers;
 using Movies.Server.Mappers;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,7 +19,6 @@ namespace Movies.Server.Controllers
 		) : Controller
 	{
 		const string ETAG_HEADER = "ETag";
-		const string MATCH_HEADER = "If-Match";
 
 		/// <summary>
 		/// Get movie details
@@ -27,7 +27,7 @@ namespace Movies.Server.Controllers
 		/// <response code="200"></response>
 		/// <response code="400"></response>
 		[HttpGet("{key}")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(MovieOutput),StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> GetAsync([FromRoute] string key)
 		{
@@ -50,7 +50,7 @@ namespace Movies.Server.Controllers
 		/// <response code="200"></response>
 		/// <response code="400"></response>
 		[HttpGet]
-		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(MoviePagedOutput<MovieBasicInfoOutput>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> GetAllAsync([FromQuery] GetSearchMoviesInput getMoviesBasicInfoInput)
 		{
@@ -72,7 +72,7 @@ namespace Movies.Server.Controllers
 		/// <response code="200"></response>
 		/// <response code="400"></response>
 		[HttpGet("top-rated")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(List<MovieBasicInfoOutput>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> GetTopRatedAsync([FromQuery] GetTopRatedMoviesInput getTopRatedMoviesInput)
 		{

@@ -8,8 +8,8 @@ namespace Movies.Contracts.Dtos
 	{
 		[Required]
 		[MaxLength(100)]
-		[RegularExpression(@"^[^,]*$",
-			ErrorMessage = "comma is not allowed.")]
+		[RegularExpression(@"^[^_]*$",
+			ErrorMessage = "underscore is not allowed.")]
 		public string Key { get; set; }
 
 		[Required]
