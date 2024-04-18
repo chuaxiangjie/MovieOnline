@@ -113,9 +113,15 @@ dotnet ef database update
 -> Clone repository using VS, build and run application
 ```
 
-#### Execute Apis via swagger
+#### Execute Rest Apis via swagger
 
 Browse swagger url : http://localhost:6600/swagger/index.html
 
 ![image](https://github.com/chuaxiangjie/MovieOnline/assets/5947398/c7ac5427-36bf-4763-a376-dd624e38d38b)
+
+#### Execute GraphQL Apis via postman
+
+Import json to postman
+[Movies.postman_collection.json](https://github.com/chuaxiangjie/MovieOnline/files/15019253/Movies.postman_collection.json)
+
 
