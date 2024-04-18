@@ -26,14 +26,13 @@ namespace Movies.Server.Gql.App
 				resolve: ctx =>
 				{
 					var (movie, etag) = movieGrainClient.GetAsync(ctx.Arguments["key"].ToString()).Result;
-
 					var output = movie.ToMovieOutput(etag);
 
 					return output;
 				}
 			);
 
-			Field<ListGraphType<MovieGraphType>>(
+			Field<MoviePagedGraphType>(
 				name: "getmovies",
 				arguments: new QueryArguments(new QueryArgument<StringGraphType>
 				{
@@ -55,17 +54,14 @@ namespace Movies.Server.Gql.App
 						Name = name
 					};
 
-					var movies = movieIndexerGrainClient.GetAllAsync(getMoviesBasicInfoInput).Result;
+					var pagedResponse = movieIndexerGrainClient.GetAllAsync(getMoviesBasicInfoInput).Result;
+					var output = pagedResponse.ToMoviePagedOutput();
 
-					//var output = movies.Select(x => x.ToMovieOutput());
-
-					//return output;
-
-					return null;
+					return output;
 				}
 			);
 
-			Field<ListGraphType<MovieGraphType>>(
+			Field<ListGraphType<MovieBasicInfoGraphType>>(
 				name: "gettopratedmovies",
 				arguments: new QueryArguments(new QueryArgument<BigIntGraphType>
 				{
@@ -82,7 +78,6 @@ namespace Movies.Server.Gql.App
 					};
 
 					var movies = movieIndexerGrainClient.GetTopRatedAsync(getTopRatedMoviesInput).Result;
-
 					var output = movies.Select(x => x.ToMovieBasicInfoOutput());
 
 					return output;

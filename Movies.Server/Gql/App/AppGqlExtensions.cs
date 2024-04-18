@@ -21,6 +21,8 @@ namespace Movies.Server.Gql.App
 			services.AddSingleton<MovieGraphMutation>();
 
 			services.AddSingleton<MovieGraphType>();
+			services.AddSingleton<MovieBasicInfoGraphType>();
+			services.AddSingleton<MoviePagedGraphType>();
 			services.AddSingleton<MovieInputGraphType>();
 			services.AddSingleton<MovieUpdateGraphType>();
 			services.AddSingleton<GenreType>();

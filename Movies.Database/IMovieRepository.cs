@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Movies.Database
 {
-	public interface IMovieRepository : IDisposable
+	public interface IMovieRepository
 	{
 		Task<PagedResponseKeyset<MovieBasicInfo>> GetAllAsync(int pageSize, int referenceId, string name, Genre? genre);
 		Task<IEnumerable<MovieBasicInfo>> GetTopRatedAsync(int numberOfTopRatedMovie);

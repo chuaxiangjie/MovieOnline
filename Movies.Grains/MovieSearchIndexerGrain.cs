@@ -14,9 +14,10 @@ namespace Movies.Grains
 		private readonly IMovieRepository _movieRepository;
 		private bool _requiresMoviesRefresh = false;
 
-		// pageSize(5)+refId(2033), [1,4,5,,63232]
-		private Dictionary<string, (int nextReferenceId, List<int> movieIds)> _moviesPageSizeReferenceIdCache;
-		private Dictionary<int, MovieBasicInfo> _moviesBasicInfoCache;
+		// Key refers to "{pageSize},{referenceId}"
+		// Value refers to "(nextReferenceId, List of movieIds)"
+		private readonly Dictionary<string, (int nextReferenceId, List<int> movieIds)> _moviesPageSizeReferenceIdCache;
+		private readonly Dictionary<int, MovieBasicInfo> _moviesBasicInfoCache;
 
 		public MovieSearchIndexerGrain(IMovieRepository movieRepository)
 		{
@@ -49,7 +50,6 @@ namespace Movies.Grains
 		{
 			var cacheKey = $"{pageSize},{referenceId}";
 
-			// check if cache key exist
 			if (_moviesPageSizeReferenceIdCache.TryGetValue(cacheKey, out var value))
 			{
 				var (nextReferenceId, movieIds) = value;
@@ -62,29 +62,25 @@ namespace Movies.Grains
 				var (name, genre) = GetSearchParameters();
 				var movieBasicInfoPagedResponse = await _movieRepository.GetAllAsync(pageSize, referenceId, name, genre);
 
-				PopulateToCache(pageSize, referenceId, movieBasicInfoPagedResponse);
+				PopulateToCache(cacheKey, movieBasicInfoPagedResponse);
 
 				return movieBasicInfoPagedResponse;
 			}
 		}
 
-		private void PopulateToCache(int pageSize, int referenceId, PagedResponseKeyset<MovieBasicInfo> moviesBasicInfoPagedResponse)
+		private void PopulateToCache(string cacheKey, PagedResponseKeyset<MovieBasicInfo> moviesBasicInfoPagedResponse)
 		{
-			var cacheKey = $"{pageSize},{referenceId}";
-
 			foreach (var movie in moviesBasicInfoPagedResponse.Data)
 			{
 				_moviesBasicInfoCache.TryAdd(movie.Id, movie);
 			}
 
 			var nextReferenceId = moviesBasicInfoPagedResponse.ReferenceId;
-
 			_moviesPageSizeReferenceIdCache.Add(cacheKey, (nextReferenceId, _moviesBasicInfoCache.Keys.ToList()));
 		}
 
 		private (string name, Genre? genre) GetSearchParameters()
 		{
-			// <Name>,<Genre>
 			var searchContentArray = this.GetPrimaryKeyString().Split('_');
 			var name = searchContentArray[0];
 			Genre? genre = string.IsNullOrEmpty(searchContentArray[1])

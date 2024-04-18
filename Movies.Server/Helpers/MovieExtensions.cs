@@ -47,7 +47,7 @@ namespace Movies.Server.Mappers
 		{
 			var output = new MoviePagedOutput<MovieOutput>
 			{
-				Reference = pagedResponse.ReferenceId,
+				ReferenceId = pagedResponse.ReferenceId,
 				Movies = pagedResponse.Data.Select(x => x.ToMovieOutput()).ToList()
 			};
 
@@ -58,7 +58,7 @@ namespace Movies.Server.Mappers
 		{
 			var output = new MoviePagedOutput<MovieBasicInfoOutput>
 			{
-				Reference = pagedResponse.ReferenceId,
+				ReferenceId = pagedResponse.ReferenceId,
 				Movies = pagedResponse.Data.Select(x => x.ToMovieBasicInfoOutput()).ToList()
 			};
 

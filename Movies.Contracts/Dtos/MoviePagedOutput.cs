@@ -4,7 +4,7 @@ namespace Movies.Contracts.Dtos
 {
 	public class MoviePagedOutput<T>
 	{
-		public int Reference { get; set; }
-		public List<T> Movies { get; set; }
+		public int ReferenceId { get; set; }
+		public IReadOnlyList<T> Movies { get; set; }
 	}
 }

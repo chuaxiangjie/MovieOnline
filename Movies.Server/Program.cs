@@ -104,7 +104,7 @@ namespace Movies.Server
 				.ConfigureServices((ctx, services) =>
 				{
 					services.AddHostedService<ApiHostedService>();
-					services.AddDbContext<MovieDbContext>();
+					services.AddDbContext<MovieDbContext>().AddDbContextFactory<MovieDbContext>();
 					services.AddTransient<IMovieRepository, MovieRepository>();
 				})
 				;

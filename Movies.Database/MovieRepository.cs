@@ -2,89 +2,81 @@
 using Movies.Database.EntityFrameworkCore;
 using Movies.Database.Extensions;
 using Movies.Domain;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Movies.Database
 {
-	public class MovieRepository(MovieDbContext movieDbContext) : IMovieRepository, IDisposable
+	public class MovieRepository(IDbContextFactory<MovieDbContext> contextFactory) : IMovieRepository
 	{
-		private readonly MovieDbContext _context = movieDbContext;
-
 		public async Task<PagedResponseKeyset<MovieBasicInfo>> GetAllAsync(
 			int pageSize, int referenceId, string name, Genre? genre)
 		{
-			var queryable = _context.Movies
-			.AsQueryable().AsNoTracking()
-			.WhereIf(!string.IsNullOrEmpty(name), x => x.Name.Contains(name))
-			.WhereIf(genre is not null, x => x.Genres.Any(x => x == genre))
-			.Where(x => x.Id > referenceId)
-			.Take(pageSize)
-			.Select(x => new MovieBasicInfo { Id = x.Id, Key = x.Key, Name = x.Name, Genres = x.Genres, Rate = x.Rate });
+			using (var context = contextFactory.CreateDbContext())
+			{
+				var queryable = context.Movies
+				.AsQueryable().AsNoTracking()
+				.WhereIf(!string.IsNullOrEmpty(name), x => x.Name.Contains(name))
+				.WhereIf(genre is not null, x => x.Genres.Any(x => x == genre))
+				.Where(x => x.Id > referenceId)
+				.Take(pageSize)
+				.Select(x => new MovieBasicInfo { Id = x.Id, Key = x.Key, Name = x.Name, Genres = x.Genres, Rate = x.Rate });
 
-			var movies = await queryable.ToListAsync();
+				var movies = await queryable.ToListAsync();
 
-			var newReferenceId = movies.Count != 0 ? movies.Last().Id : 0;
-			var pagedResponse = new PagedResponseKeyset<MovieBasicInfo>(movies, newReferenceId);
+				var newReferenceId = movies.Count != 0 ? movies.Last().Id : 0;
+				var pagedResponse = new PagedResponseKeyset<MovieBasicInfo>(movies, newReferenceId);
 
-			return pagedResponse;
+				return pagedResponse;
+			}
 		}
 
 		public async Task<IEnumerable<MovieBasicInfo>> GetTopRatedAsync(int numberOfTopRatedMovie)
 		{
-			var queryable = _context.Movies
+			using (var context = contextFactory.CreateDbContext())
+			{
+				var queryable = context.Movies
 				.AsQueryable().AsNoTracking()
 				.OrderByDescending(x => x.Rate)
 				.Take(numberOfTopRatedMovie)
 				.Select(x => new MovieBasicInfo { Id = x.Id, Key = x.Key, Name = x.Name, Genres = x.Genres, Rate = x.Rate });
 
-			var movies = await queryable.ToListAsync();
+				var movies = await queryable.ToListAsync();
 
-			return movies;
+				return movies;
+			}
 		}
 
-		public async Task<Movie> GetByKeyAsync(string key) => 
-			await _context.Movies.AsNoTracking()
-				.FirstOrDefaultAsync(x => x.Key == key);
+		public async Task<Movie> GetByKeyAsync(string key)
+		{
+			using (var context = contextFactory.CreateDbContext())
+			{
+				return await context.Movies.AsNoTracking()
+					.FirstOrDefaultAsync(x => x.Key == key);
+			}
+		}
 
 		public async Task CreateAsync(Movie movie)
 		{
-			await _context.Movies.AddAsync(movie);
-			await SaveAsync();
+			using (var context = contextFactory.CreateDbContext())
+			{
+				await context.Movies.AddAsync(movie);
+				await context.SaveChangesAsync();
+			}
 		}
 
 		public async Task UpdateAsync(Movie movie)
 		{
-			var existingMovie = await _context.Movies.FirstAsync(x => x.Id == movie.Id);
-
-			existingMovie.Name = movie.Name;
-			existingMovie.Description = movie.Description;
-
-			await SaveAsync();
-		}
-
-		private async Task SaveAsync() => await _context.SaveChangesAsync();
-
-		private bool disposed = false;
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!disposed)
+			using (var context = contextFactory.CreateDbContext())
 			{
-				if (disposing)
-				{
-					_context.Dispose();
-				}
-			}
-			disposed = true;
-		}
+				var existingMovie = await context.Movies.FirstAsync(x => x.Id == movie.Id);
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
+				existingMovie.Name = movie.Name;
+				existingMovie.Description = movie.Description;
+
+				await context.SaveChangesAsync();
+			}
 		}
 	}
 }
